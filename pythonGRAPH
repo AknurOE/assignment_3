@@ -1,0 +1,82 @@
+import json
+import matplotlib.pyplot as plt
+from collections import defaultdict
+
+with open(r"C:\Users\akono\Desktop\output.json", "r") as f:
+    results = json.load(f)
+
+
+graph_ids = []
+prim_times = []
+kruskal_times = []
+
+
+from collections import defaultdict
+data = defaultdict(dict)
+
+for r in results:
+    graph_id = r["graphId"]
+    algo = r["algorithm"].lower()
+    data[graph_id][algo] = r
+
+
+for gid, d in data.items():
+    if gid == 0:
+        continue
+    graph_ids.append(gid)
+    prim_times.append(d.get("prim", {}).get("executionTimeMs", 0))
+    kruskal_times.append(d.get("kruskal", {}).get("executionTimeMs", 0))
+
+data = defaultdict(dict)
+for r in results:
+    gid = r["graphId"]
+    algo = r["algorithm"].lower()
+    data[gid][algo] = r
+
+
+graph_ids = []
+prim_ops = []
+kruskal_ops = []
+prim_costs = []
+kruskal_costs = []
+
+for gid, d in sorted(data.items()):
+    if gid == 0:
+        continue
+    graph_ids.append(gid)
+    prim_ops.append(d.get("prim", {}).get("operationCount", 0))
+    kruskal_ops.append(d.get("kruskal", {}).get("operationCount", 0))
+    prim_costs.append(d.get("prim", {}).get("totalCost", 0))
+    kruskal_costs.append(d.get("kruskal", {}).get("totalCost", 0))
+
+plt.figure(figsize=(10,6))
+plt.plot(graph_ids, prim_times, marker='o', label="Prim")
+plt.plot(graph_ids, kruskal_times, marker='s', label="Kruskal")
+plt.xlabel("Graph ID")
+plt.ylabel("Execution Time (ms)")
+plt.title("Execution Time Comparison")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(10,5))
+plt.plot(graph_ids, prim_ops, marker='o', label="Prim")
+plt.plot(graph_ids, kruskal_ops, marker='s', label="Kruskal")
+plt.xlabel("Graph ID")
+plt.ylabel("Operation Count")
+plt.title("Operation Count Comparison")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+plt.figure(figsize=(10,5))
+plt.plot(graph_ids, prim_costs, marker='o', label="Prim")
+plt.plot(graph_ids, kruskal_costs, marker='s', label="Kruskal")
+plt.xlabel("Graph ID")
+plt.ylabel("Total MST Cost")
+plt.title("Total MST Cost Comparison")
+plt.legend()
+plt.grid(True)
+plt.show()
+
